@@ -7,10 +7,12 @@ import { AppComponent } from './app.component';
 import { StoreModule } from '@ngrx/store';
 import { reducer } from './reducers';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatGridListModule, MatCardModule, MatMenuModule, MatIconModule, MatButtonModule, MatToolbarModule, MatSidenavModule, MatListModule } from '@angular/material';
+import { MatGridListModule, MatCardModule, MatMenuModule, MatIconModule, MatButtonModule,
+  MatToolbarModule, MatSidenavModule, MatListModule } from '@angular/material';
 import { LayoutModule } from '@angular/cdk/layout';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { NavComponent } from './nav/nav.component';
+import {userPreferencesMetaReducer} from './user-preferences-metareducer';
 
 @NgModule({
   declarations: [
@@ -21,7 +23,7 @@ import { NavComponent } from './nav/nav.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    StoreModule.forRoot({app: reducer}),
+    StoreModule.forRoot({app: reducer}, {metaReducers: [userPreferencesMetaReducer]}),
     StoreDevtoolsModule.instrument({
       maxAge: 10
     }),

@@ -1,24 +1,29 @@
-import {ActionReducer} from '@ngrx/store';
-import {merge, pick} from 'lodash/fp';
-import {AppActions} from './app.actions';
-import {State} from './reducers';
+import { UserPreferncesService } from './user-prefernces.service';
+import { ActionReducer } from '@ngrx/store';
+import { merge, pick } from 'lodash/fp';
+import { AppActions } from './app.actions';
+import { State } from './reducers';
 
-export function userPreferencesMetaReducer(reducer: ActionReducer<{app: State}, AppActions>): ActionReducer<{app: State}, AppActions> {
-  let firstRun = true;
-  const keys = ['app.activeTheme'];
-  const localStorageKey = '__user-preferences__';
-  return function (state, action) {
-    let nextState = reducer(state, action);
+export function userPreferncesMetaReducer(userPService: UserPreferncesService,
+  keys: string[]) {
+  return function
+    (reducer: ActionReducer<{ app: State }, AppActions>)
+    : ActionReducer<{ app: State }, AppActions> {
 
-    if (firstRun) {
-      firstRun         = false;
-      const savedState = JSON.parse((localStorage.getItem(localStorageKey) || '{}'));
-      nextState        = merge(nextState, savedState);
-    }
+    let firstRun = true;
+    return function (state, action) {
+      let nextState = reducer(state, action);
 
-    const stateToSave = JSON.stringify(pick(keys, nextState));
-    localStorage.setItem(localStorageKey, stateToSave);
+      if (firstRun) {
+        firstRun = false;
+        const savedState = userPService.getFromStorage();
+        nextState = merge(nextState, savedState);
+      }
 
-    return nextState;
+      userPService.saveToStorage(pick(keys, nextState));
+
+
+      return nextState;
+    };
   };
 }
